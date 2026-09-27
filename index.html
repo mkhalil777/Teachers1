@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">المسابقة التفاعلية - مدرسة السلطان فيصل بن تركي للبنين</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة القصاصات الاحتفالية -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            --oman-green: #064e3b;
+            --oman-red: #881337;
+        }
+        body { 
+            font-family: 'Baloo Bhaijaan 2', cursive; 
+            overflow-x: hidden; 
+            user-select: none; 
+            background: #0b1315; 
+            color: #f8fafc; 
+        }
+
+        .omani-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background-image: 
+                linear-gradient(to bottom, rgba(5, 18, 16, 0.85), rgba(12, 26, 23, 0.92)),
+                url('oman_bg.jpg'),
+                url('https://images.unsplash.com/photo-1596701062351-8c2c14d1fdd1?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .omani-pattern {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.12;
+            background-image: 
+                radial-gradient(#d4af37 1.5px, transparent 1.5px), 
+                radial-gradient(#10b981 1px, transparent 1px);
+            background-size: 36px 36px;
+            background-position: 0 0, 18px 18px;
+        }
+
+        .circle-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            border: 3px solid #eab308;
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.4), inset 0 0 8px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+            transition: transform 0.3s ease;
+        }
+        .circle-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .luxury-card {
+            background: rgba(11, 28, 24, 0.86);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.5px solid rgba(234, 179, 8, 0.4);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.15);
+            border-radius: 24px;
+        }
+
+        /* خلفية مخصصة لمستطيل الفرق ولوحة المتصدرين مع صورة champ */
+        .champ-bg-card {
+            background-color: rgba(11, 28, 24, 0.9);
+            background-image: 
+                linear-gradient(rgba(7, 20, 17, 0.78), rgba(7, 20, 17, 0.88)),
+                url('champ.png'),
+                url('champ.jpg'),
+                url('champ.jpeg'),
+                url('champ.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.5px solid rgba(234, 179, 8, 0.45);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.15);
+            border-radius: 24px;
+        }
+
+        .challenge-container {
+            background-color: rgba(11, 28, 24, 0.9);
+            background-image: 
+                linear-gradient(rgba(7, 20, 17, 0.65), rgba(7, 20, 17, 0.75)),
+                url('background.png'),
+                url('background.jpg'),
+                url('background.jpeg'),
+                url('background.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(234, 179, 8, 0.45);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(212, 175, 55, 0.15);
+            border-radius: 24px;
+        }
+
+        .quiz-option-btn {
+            background: rgba(18, 43, 37, 0.88);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            color: #f1f5f9;
+            box-shadow: 0 4px 0 rgba(7, 20, 17, 0.9);
+            transition: all 0.15s ease;
+            min-height: 4.2rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+        }
+        .quiz-option-btn:hover:not(:disabled) {
+            background: rgba(27, 66, 57, 0.95);
+            border-color: #facc15;
+            transform: translateY(-2px);
+        }
+        .quiz-option-btn:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 rgba(7, 20, 17, 0.9);
+        }
+        .quiz-option-btn.correct {
+            background: #15803d !important;
+            border-color: #4ade80 !important;
+            box-shadow: 0 4px 0 #14532d !important;
+            color: #ffffff !important;
+            animation: pulse-correct 0.6s ease;
+        }
+        .quiz-option-btn.wrong {
+            background: #991b1b !important;
+            border-color: #f87171 !important;
+            box-shadow: 0 4px 0 #7f1d1d !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+        @keyframes pulse-correct {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-action-gold {
+            background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
+            color: #0f172a;
+            font-weight: 800;
+            border-radius: 9999px;
+            box-shadow: 0 6px 0 #854d0e, 0 12px 20px rgba(0,0,0,0.4);
+            transition: all 0.15s;
+        }
+        .btn-action-gold:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #854d0e, 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .btn-action-blue {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            color: #ffffff;
+            font-weight: 800;
+            border-radius: 9999px;
+            box-shadow: 0 6px 0 #0369a1, 0 12px 20px rgba(0,0,0,0.4);
+            transition: all 0.15s;
+        }
+        .btn-action-blue:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0369a1;
+        }
+
+        .wheel-svg {
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 0 0 8px #d4af37, 0 0 35px rgba(212, 175, 55, 0.4);
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(11, 28, 24, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between p-3 md:p-6 pb-20 md:pb-24">
+
+    <!-- عنصر الصوت -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="back.mp3" type="audio/mpeg">
+        <source src="back.wav" type="audio/wav">
+        <source src="back.ogg" type="audio/ogg">
+        <source src="back.m4a" type="audio/mp4">
+        <source src="game_audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="omani-bg"></div>
+    <div class="omani-pattern"></div>
+
+    <!-- شريط الرأس الدائم في جميع صفحات المسابقة -->
+    <header class="w-full max-w-7xl mx-auto luxury-card px-4 py-2.5 flex items-center justify-between border-b-2 border-yellow-500/50 shadow-lg z-30 mb-4">
+        <div class="flex items-center gap-3">
+            <img src="school.png" onerror="tryNextExt(this, ['school.jpg', 'school.jpeg', 'school.webp'])" alt="شعار المدرسة" class="circle-logo">
+            <div class="text-right">
+                <h3 class="text-xs sm:text-sm font-bold text-yellow-400">سلطنة عمان - وزارة التربية والتعليم</h3>
+                <h2 class="text-sm sm:text-base md:text-lg font-black text-white ui-school-name">مدرسة السلطان فيصل بن تركي للبنين</h2>
+            </div>
+        </div>
+
+        <div class="text-center px-2">
+            <div class="inline-block bg-gradient-to-r from-emerald-700/80 to-red-800/80 border border-yellow-400/50 rounded-full px-4 sm:px-6 py-1 text-xs md:text-sm font-black text-yellow-300 shadow-md">
+                🇴🇲 <span class="ui-subject-grade">الرياضيات - الصف السادس</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="text-left">
+                <h3 class="text-xs sm:text-sm font-bold text-yellow-400 ui-comp-title">المسابقة الثانية</h3>
+                <h2 class="text-sm sm:text-base md:text-lg font-black text-emerald-300 flex items-center justify-end gap-1">
+                    <span class="ui-teacher-header">إعداد / أ. محمد خليل</span>
+                </h2>
+            </div>
+            <img src="math.png" onerror="tryNextExt(this, ['math.jpg', 'math.jpeg', 'math.webp'])" alt="شعار المادة" class="circle-logo">
+        </div>
+    </header>
+
+    <!-- منطقة التحكم بالصوت -->
+    <div class="fixed bottom-4 left-4 z-50 flex items-center gap-2">
+        <button id="muteBtn" onclick="toggleMute()" title="كتم / تشغيل الصوت" class="bg-emerald-950/90 text-yellow-400 p-3.5 rounded-full shadow-2xl border-2 border-yellow-500/50 text-xl hover:scale-110 active:scale-95 transition-transform cursor-pointer">
+            🔊
+        </button>
+        <label id="filePickerLabel" title="اضغط هنا لتحديد ملف الصوت من جهازك إذا لم يعمل تلقائياً" class="hidden cursor-pointer bg-red-950/90 hover:bg-red-900 border border-yellow-400/60 text-yellow-300 text-xs px-3 py-2 rounded-xl shadow-lg transition-colors">
+            📁 اختر ملف back
+            <input type="file" id="audioPicker" accept="audio/*" class="hidden" onchange="loadCustomAudio(this)">
+        </label>
+    </div>
+
+    <!-- 1. شاشة البداية -->
+    <main id="startScreen" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        <div class="luxury-card max-w-xl w-full p-6 md:p-8 text-center border-2 border-yellow-500/60 flex flex-col items-center relative overflow-hidden">
+            <div class="flex items-center justify-center gap-6 mb-6">
+                <img src="school.png" onerror="tryNextExt(this, ['school.jpg', 'school.jpeg', 'school.webp'])" class="circle-logo w-24 h-24 md:w-28 md:h-28" alt="School">
+                <div class="h-16 w-0.5 bg-yellow-500/40"></div>
+                <img src="math.png" onerror="tryNextExt(this, ['math.jpg', 'math.jpeg', 'math.webp'])" class="circle-logo w-24 h-24 md:w-28 md:h-28" alt="Math">
+            </div>
+
+            <h1 class="text-3xl md:text-5xl font-black text-yellow-400 mb-2 ui-comp-title">المسابقة الثانية</h1>
+            <h2 class="text-2xl md:text-4xl font-black text-white mb-1 ui-subject-name">مادة الرياضيات</h2>
+            <p class="text-lg md:text-2xl font-bold text-emerald-400 mb-1 ui-grade-name">الصف السادس الأساسي</p>
+            <p class="text-base md:text-lg text-slate-200 font-extrabold mb-1 ui-school-name">مدرسة السلطان فيصل بن تركي للبنين</p>
+            
+            <p class="text-sm md:text-base text-yellow-300 font-black mb-5 flex items-center justify-center gap-2 bg-emerald-950/80 border border-yellow-500/40 px-5 py-1.5 rounded-full shadow-inner">
+                <span>👨‍🏫</span>
+                <span class="ui-teacher-name">إعداد / أ. محمد خليل</span>
+            </p>
+
+            <button onclick="startGame()" class="btn-action-gold text-xl md:text-2xl px-12 py-3.5 w-full max-w-sm mb-3 cursor-pointer">
+                🚀 ابدأ المسابقة
+            </button>
+
+            <button onclick="openSettingsModal()" class="flex items-center justify-center gap-2 text-sm font-bold text-yellow-300/90 hover:text-yellow-300 bg-emerald-950/70 hover:bg-emerald-900/90 border border-yellow-500/40 px-5 py-2 rounded-xl transition-all cursor-pointer">
+                <span>⚙️</span> تخصيص الفرق وبنك الأسئلة والمعلومات
+            </button>
+        </div>
+    </main>
+
+    <!-- نافذة منبثقة: إعدادات وتخصيص المسابقة -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="luxury-card max-w-3xl w-full p-6 text-right border-2 border-yellow-500/60 max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-yellow-500/40 pb-3 mb-4 sticky top-0 bg-[#0b1c18]/95 z-10 backdrop-blur">
+                <h3 class="text-xl font-black text-yellow-400 flex items-center gap-2">
+                    <span>⚙️</span> لوحة التحكم والإعدادات المتقدمة
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-red-400 text-3xl font-bold cursor-pointer">&times;</button>
+            </div>
+
+            <!-- تبويبات التنقل -->
+            <div class="flex gap-2 border-b border-emerald-800/60 pb-3 mb-4">
+                <button id="tabBtnGeneral" onclick="switchSettingsTab('general')" class="px-4 py-1.5 rounded-lg font-bold text-sm bg-yellow-500 text-slate-900">
+                    معلومات عامة والفرق
+                </button>
+                <button id="tabBtnQuestions" onclick="switchSettingsTab('questions')" class="px-4 py-1.5 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700">
+                    بنك الأسئلة (<span id="tabQCount">32</span>)
+                </button>
+            </div>
+
+            <!-- تبويب 1: المعلومات والفرق -->
+            <div id="tabGeneral" class="space-y-4">
+                <div class="bg-yellow-500/10 border border-yellow-500/30 p-2.5 rounded-xl">
+                    <label class="flex items-center gap-1.5 text-xs md:text-sm font-black text-yellow-300 mb-1">
+                        <span>👨‍🏫</span> اسم المعلم / معد المسابقة:
+                    </label>
+                    <input type="text" id="cfgTeacherName" placeholder="أ. محمد خليل" class="w-full bg-slate-900/90 border border-yellow-500/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs md:text-sm font-bold text-slate-300 mb-1">اسم المدرسة:</label>
+                        <input type="text" id="cfgSchoolName" class="w-full bg-slate-900/90 border border-emerald-700/60 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs md:text-sm font-bold text-slate-300 mb-1">عنوان المسابقة:</label>
+                        <input type="text" id="cfgCompTitle" class="w-full bg-slate-900/90 border border-emerald-700/60 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs md:text-sm font-bold text-slate-300 mb-1">المادة والصف:</label>
+                        <input type="text" id="cfgSubjectGrade" class="w-full bg-slate-900/90 border border-emerald-700/60 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs md:text-sm font-bold text-slate-300 mb-1">الجهة المشرفة:</label>
+                        <input type="text" id="cfgDeptName" class="w-full bg-slate-900/90 border border-emerald-700/60 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs md:text-sm font-bold text-slate-300 mb-1">وقت السؤال (بالثواني):</label>
+                        <input type="number" id="cfgTimer" min="10" max="180" class="w-full bg-slate-900/90 border border-emerald-700/60 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-400">
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-emerald-800/60">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs md:text-sm font-bold text-yellow-300">تقسيم المجموعات / الفرق المشاركة:</span>
+                        <button type="button" onclick="addTeamField()" class="text-xs bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3 py-1 rounded-lg flex items-center gap-1 transition-all">
+                            <span>➕ إضافة فريق</span>
+                        </button>
+                    </div>
+                    <div id="teamsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-48 overflow-y-auto p-1"></div>
+                </div>
+            </div>
+
+            <!-- تبويب 2: بنك الأسئلة المخصص -->
+            <div id="tabQuestions" class="hidden space-y-4">
+                <div class="bg-emerald-950/70 border border-yellow-500/30 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-yellow-300">العدد المطلوب طرحه في الجولة:</label>
+                        <input type="number" id="cfgMaxQuestions" min="1" max="100" class="w-20 bg-slate-900 border border-yellow-500/50 rounded-lg px-2 py-1 text-center text-white font-bold text-sm">
+                        <span class="text-xs text-slate-400">سؤال</span>
+                    </div>
+                    <button onclick="openNewQuestionForm()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow">
+                        <span>➕ إضافة سؤال جديد</span>
+                    </button>
+                </div>
+
+                <div id="newQuestionBox" class="hidden bg-slate-900/95 border-2 border-yellow-500/60 p-4 rounded-2xl space-y-3">
+                    <h4 class="text-sm font-bold text-yellow-300">✍️ إضافة سؤال جديد</h4>
+                    <input type="text" id="customQText" placeholder="نص السؤال..." class="w-full bg-slate-800 border border-emerald-700 rounded-xl px-3 py-2 text-white text-sm">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <span class="text-slate-400">الخيار 1 (أ):</span>
+                            <input type="text" id="customOp0" placeholder="الخيار الأول" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
+                        </div>
+                        <div>
+                            <span class="text-slate-400">الخيار 2 (ب):</span>
+                            <input type="text" id="customOp1" placeholder="الخيار الثاني" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
+                        </div>
+                        <div>
+                            <span class="text-slate-400">الخيار 3 (ج):</span>
+                            <input type="text" id="customOp2" placeholder="الخيار الثالث" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
+                        </div>
+                        <div>
+                            <span class="text-slate-400">الخيار 4 (د):</span>
+                            <input type="text" id="customOp3" placeholder="الخيار الرابع" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label class="text-xs font-bold text-emerald-400">الإجابة الصحيحة:</label>
+                        <select id="customCorrectAns" class="bg-slate-800 border border-emerald-600 text-white text-xs rounded-lg px-3 py-1.5">
+                            <option value="0">الخيار 1</option>
+                            <option value="1">الخيار 2</option>
+                            <option value="2">الخيار 3</option>
+                            <option value="3">الخيار 4</option>
+                        </select>
+                        <button onclick="saveNewQuestion()" class="btn-action-gold text-xs px-4 py-1.5 font-bold mr-auto">حفظ السؤال</button>
+                        <button onclick="document.getElementById('newQuestionBox').classList.add('hidden')" class="bg-slate-800 text-slate-300 text-xs px-3 py-1.5 rounded-lg">إلغاء</button>
+                    </div>
+                </div>
+
+                <div id="questionsListContainer" class="space-y-2 max-h-72 overflow-y-auto p-1"></div>
+            </div>
+
+            <!-- أزرار الحفظ والإغلاق -->
+            <div class="flex flex-col sm:flex-row gap-2 pt-4 border-t border-yellow-500/30 mt-4">
+                <button onclick="saveCustomSettings()" class="btn-action-gold py-2.5 px-6 font-bold flex-1 cursor-pointer">
+                    💾 حفظ وتطبيق جميع التغييرات
+                </button>
+                <button onclick="resetDefaultSettings()" class="bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-200 py-2.5 px-4 rounded-full font-bold text-xs cursor-pointer">
+                    🔄 استعادة الإعدادات الأصلية
+                </button>
+                <button onclick="closeSettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 px-4 rounded-full font-bold text-xs cursor-pointer">
+                    إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ساحة التحدي -->
+    <main id="gameScreen" class="hidden flex-1 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <aside class="lg:col-span-4 flex flex-col gap-4">
+            <div class="luxury-card p-4 text-center border-yellow-500/40 flex items-center justify-between">
+                <span class="text-sm text-yellow-300 font-bold">الدور الحالي:</span>
+                <span id="currentTeamName" class="text-xl md:text-2xl font-black text-white bg-yellow-500/20 border border-yellow-400/30 px-4 py-1 rounded-xl">فريق الصقور</span>
+            </div>
+
+            <!-- مستطيل أسماء الفرق ولوحة المتصدرين مع خلفية champ -->
+            <div class="champ-bg-card p-4 flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between border-b border-yellow-500/40 pb-2 mb-3">
+                        <span class="font-bold text-yellow-400 text-base drop-shadow">لوحة المتصدرين</span>
+                        <span class="text-xl">🏆</span>
+                    </div>
+                    <div id="scoreboard" class="space-y-2.5 max-h-80 overflow-y-auto"></div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-yellow-500/40 text-center">
+                    <span class="text-sm text-yellow-100/80 font-bold">رقم التحدي: </span>
+                    <span id="qNum" class="text-lg font-black text-yellow-400">1</span>
+                    <span class="text-sm text-yellow-100/80 font-bold"> / <span id="qTotal">32</span></span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- مربع السؤال الأكبر -->
+        <section class="lg:col-span-8 challenge-container p-4 md:p-8 flex flex-col items-center justify-center relative min-h-[460px]">
+            <div id="wheelSection" class="w-full flex flex-col items-center justify-center py-2">
+                <div class="relative mb-6">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 z-30 drop-shadow-md">
+                        <svg width="46" height="54" viewBox="0 0 50 60">
+                            <path d="M25 60 L0 0 L50 0 Z" fill="#eab308" stroke="#ffffff" stroke-width="2"/>
+                            <circle cx="25" cy="10" r="6" fill="#854d0e"/>
+                        </svg>
+                    </div>
+
+                    <svg id="wheel" class="wheel-svg w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] md:w-[400px] md:h-[400px]" viewBox="0 0 400 400">
+                        <defs id="wheelDefs"></defs>
+                        <circle cx="200" cy="200" r="198" fill="#0d2822"/>
+                        <g id="wheelSegments"></g>
+                        <g id="wheelImages"></g>
+                    </svg>
+
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-yellow-400 overflow-hidden shadow-2xl bg-slate-900 flex items-center justify-center">
+                            <img src="logo.png" onerror="tryNextExt(this, ['logo.jpg', 'logo.jpeg', 'logo.webp'])" class="w-full h-full object-cover" alt="Center Logo">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="spinBtn" onclick="triggerSpin()" class="btn-action-gold text-lg md:text-xl px-10 py-3 cursor-pointer">
+                    🎲 قم بتدوير القرص
+                </button>
+            </div>
+
+            <div id="questionSection" class="hidden w-full flex-col items-center justify-center">
+                <div class="mb-4 flex justify-center">
+                    <div class="w-16 h-16 rounded-full bg-emerald-950/90 border-4 border-yellow-400 flex items-center justify-center shadow-lg">
+                        <span id="timer" class="text-2xl font-black text-yellow-400">60</span>
+                    </div>
+                </div>
+
+                <div class="w-full bg-emerald-950/80 border border-yellow-500/30 rounded-2xl p-4 md:p-6 mb-5 text-center shadow-md backdrop-blur-sm">
+                    <p id="qText" class="text-lg md:text-2xl font-bold text-white leading-relaxed"></p>
+                </div>
+
+                <div id="optionsGrid" class="w-full grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
+
+                <button id="nextBtn" onclick="resolveAnswer()" class="hidden btn-action-blue text-lg px-8 py-2.5 mt-2 cursor-pointer">
+                    السؤال التالي ⬅️
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- 3. شاشة النتائج -->
+    <div id="resultScreen" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="luxury-card max-w-lg w-full p-8 text-center border-2 border-yellow-500">
+            <div class="text-6xl mb-3">🏆</div>
+            <h2 class="text-3xl md:text-4xl font-black text-yellow-400 mb-2">انتهت المسابقة!</h2>
+            <div class="mb-4 bg-emerald-950/70 border border-yellow-500/30 py-2 px-4 rounded-xl inline-block">
+                <p class="text-white font-bold text-sm ui-school-name">مدرسة السلطان فيصل بن تركي للبنين</p>
+                <p class="text-yellow-300 font-extrabold text-xs ui-teacher-name">إعداد / أ. محمد خليل</p>
+            </div>
+            <div id="finalRanking" class="space-y-2 mb-6 text-right max-h-72 overflow-y-auto"></div>
+            <button onclick="location.reload()" class="btn-action-gold text-lg font-black py-3 px-8 w-full cursor-pointer">
+                🔄 مسابقة جديدة
+            </button>
+        </div>
+    </div>
+
+    <!-- الترويسة السفلية الثابتة في جميع صفحات وشاشات المسابقة -->
+    <footer class="fixed bottom-0 left-0 right-0 z-30 pointer-events-none pb-2 pt-3 bg-gradient-to-t from-black/90 via-[#0b1315]/80 to-transparent">
+        <div class="w-full max-w-2xl mx-auto px-4 flex justify-center">
+            <div class="pointer-events-auto bg-[#0b1c18]/90 backdrop-blur-md border border-yellow-500/40 rounded-full px-5 py-1.5 shadow-xl text-center flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-xs sm:text-sm">
+                <span class="text-yellow-400 font-bold tracking-wide">تصميم البرنامج / أ. محمد خليل</span>
+                <span class="text-yellow-500/60 hidden sm:inline">•</span>
+                <span class="text-emerald-300 font-semibold">مدرسة السلطان فيصل بن تركي للبنين</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function tryNextExt(imgEl, exts) {
+            if (!imgEl.dataset.extIndex) imgEl.dataset.extIndex = "0";
+            let idx = parseInt(imgEl.dataset.extIndex);
+            if (idx < exts.length) {
+                imgEl.src = exts[idx];
+                imgEl.dataset.extIndex = (idx + 1).toString();
+            } else {
+                imgEl.onerror = null;
+            }
+        }
+
+        // دالة إطلاق قصاصات الاحتفال
+        function fireConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.65 },
+                    colors: ['#d4af37', '#10b981', '#ef4444', '#ffffff', '#f59e0b']
+                });
+            }
+        }
+
+        // الأسئلة الـ 32 الافتراضية
+        const defaultQuestions = [
+            { q: "أي من الأعداد الآتية هو مضاعف للعدد 8؟", o: ["18", "24", "68", "30"], a: 1 },
+            { q: "أي من الأعداد الآتية ليس من مضاعفات العدد 8؟", o: ["48", "56", "68", "72"], a: 2 },
+            { q: "أي من الأعداد الآتية يمثل عاملاً من عوامل العدد 30؟", o: ["4", "6", "20", "60"], a: 1 },
+            { q: "جميع الأعداد التالية من عوامل العدد 30 ما عدا:", o: ["5", "10", "15", "20"], a: 3 },
+            { q: "عمر ليلى هذا العام مضاعف للعدد 8 وعمرها العام القادم مضاعف للعدد 7، فكم عمرها الآن؟", o: ["16 سنة", "24 سنة", "40 سنة", "48 سنة"], a: 3 },
+            { q: "ما هو عدد جميع عوامل العدد 24؟", o: ["6 عوامل", "7 عوامل", "8 عوامل", "10 عوامل"], a: 2 },
+            { q: "ما هي عوامل العدد 25؟", o: ["1، 5 فقط", "1، 5، 25", "1، 25 فقط", "5، 25 فقط"], a: 1 },
+            { q: "أي من الأعداد التالية يمثل عاملاً ومضاعفاً لنفس العدد 12 في آن واحد؟", o: ["1", "6", "12", "24"], a: 2 },
+            { q: "أي من الأعداد التالية يُعد مضاعفاً مشتركاً للعددين 2 و 3 معاً؟", o: ["15", "21", "24", "16"], a: 2 },
+            { q: "عدد أصغر من 1000 ومن مضاعفات العدد 25:", o: ["250", "1025", "1250", "255"], a: 0 },
+            { q: "عدد أكبر من 1000 ومن مضاعفات العدد 25:", o: ["975", "1050", "995", "1005"], a: 1 },
+            { q: "عدد أكبر من 1000 وليس من مضاعفات العدد 25:", o: ["1100", "1250", "1035", "1500"], a: 2 },
+            { q: "أي من الأعداد الآتية يقع في منطقة (مضاعفات 2) وخارج منطقة (مضاعفات 6)؟", o: ["6", "12", "10", "9"], a: 2 },
+            { q: "العدد 12 في مخطط فن لمضاعفات 2 و 6 يوضع في منطقة:", o: ["مضاعفات 6 فقط داخل الدائرة الداخلية", "خارج مضاعفات 2", "مع الأعداد الفردية", "ليس مضاعفاً لأي منهما"], a: 0 },
+            { q: "أي من الأعداد التالية زوجي ومضاعف للعدد 3 في مخطط كارول؟", o: ["15", "16", "24", "22"], a: 2 },
+            { q: "العدد 17 يصنف في مخطط كارول على أنه:", o: ["عدد زوجي ومضاعف لـ 3", "ليس زوجياً وليس من مضاعفات 3", "عدد زوجي وليس مضاعفاً لـ 3", "ليس زوجياً ومن مضاعفات 3"], a: 1 },
+            { q: "أي من الأعداد الآتية يُعد عدداً زوجياً؟", o: ["9", "11", "57", "26"], a: 3 },
+            { q: "العدد 2002 يصنف على أنه عدد:", o: ["فردي لأن آحاده 2", "زوجي لأن آحاده 2", "فردي لأن مجموع أرقامه 4", "لا زوجي ولا فردي"], a: 1 },
+            { q: "العدد 187 عدد فردي، والتفسير الصحيح هو أن:", o: ["رقم مئاته فردي", "رقم عشراته زوجي", "رقم آحاده 7 وهو رقم فردي", "مجموع أرقامه 16"], a: 2 },
+            { q: "كوّن عامر عدداً من 3 أرقام، كل أرقامه فردية ومجموعها 7، فما هو؟", o: ["115", "124", "313", "115 أو 133 أو 313 أو 511"], a: 3 },
+            { q: "كوّن فهد عدداً فردياً من 3 أرقام باستخدام (2، 3، 6)، ورقم المئات أكبر من 2، فما هو العدد؟", o: ["263", "623", "632", "362"], a: 1 },
+            { q: "عدد زوجي من 4 أرقام مجموعه 4، مئاته وعشراته أصفار، ورقم آلافه يساوي آحاده، فما هو العدد؟", o: ["4000", "2002", "1003", "2020"], a: 1 },
+            { q: "العدد 235 يُصنف في مخطط كارول على أنه:", o: ["عدد فردي مكوّن من ثلاثة أرقام", "عدد زوجي مكوّن من ثلاثة أرقام", "عدد فردي ليس مكوّناً من ثلاثة أرقام", "عدد زوجي ليس مكوّناً من ثلاثة أرقام"], a: 0 },
+            { q: "العدد 7004 يُصنف على أنه:", o: ["عدد فردي ليس مكوّناً من ثلاثة أرقام", "عدد ليس فردياً (زوجي) وليس مكوّناً من ثلاثة أرقام", "عدد مكوّن من 3 أرقام", "عدد فردي مكوّن من 4 أرقام"], a: 1 },
+            { q: "ثلاثة أعداد زوجية مختلفة حاصل جمعها 50 وكل عدد منها أكبر من 10:", o: ["12 + 14 + 24", "10 + 20 + 20", "12 + 16 + 21", "12 + 18 + 22"], a: 0 },
+            { q: "ما العدد الذي ينطبق عليه: مضاعف لـ 25، زوجي، بين 550 و 700، وليس 600؟", o: ["575", "625", "650", "675"], a: 2 },
+            { q: "جميع مضاعفات العدد 10 يجب أن يكون رقم آحادها دائماً:", o: ["5", "0", "2", "أي رقم زوجي"], a: 1 },
+            { q: "عند جمع عدد فردي مع عدد فردي آخر، يكون الناتج دائماً عدداً:", o: ["فردياً", "زوجياً", "أولياً", "صفراً دائماً"], a: 1 },
+            { q: "عند ضرب أي عدد كامل في عدد زوجي، فإن الناتج يكون دائماً:", o: ["عدداً زوجياً", "عدداً فردياً", "عدداً أولياً", "كسراً"], a: 0 },
+            { q: "عدد من رقمين من مضاعفات العدد 3 يمكن تكوينه باستخدام الرقمين 4 و 5 هو:", o: ["45", "54", "45 أو 54", "لا يمكن تكوين أي مضاعف"], a: 2 },
+            { q: "أي من الأعداد التالية هو عامل للعدد 32؟", o: ["3", "5", "8", "6"], a: 2 },
+            { q: "باستخدام الأرقام (5، 6، 7، 8) مرة واحدة، أي الآتي يعطي مجموعاً من مضاعفات 5؟", o: ["58 + 76", "67 + 58", "76 + 85", "56 + 78"], a: 1 }
+        ];
+
+        const defaultAppConfig = {
+            teacherName: "أ. محمد خليل",
+            schoolName: "مدرسة السلطان فيصل بن تركي للبنين",
+            compTitle: "المسابقة الثانية",
+            subjectGrade: "الرياضيات - الصف السادس",
+            subjectName: "مادة الرياضيات",
+            gradeName: "الصف السادس الأساسي",
+            deptName: "أسرة الرياضيات",
+            timerSec: 60,
+            maxQuestions: 32,
+            teams: ['فريق الصقور 🦅', 'فريق النمور 🐅', 'فريق الأسود 🦁', 'فريق النسور 🦅'],
+            questions: [...defaultQuestions]
+        };
+
+        let appConfig = JSON.parse(localStorage.getItem('quizCustomConfig_v2')) || { ...defaultAppConfig };
+        if (!appConfig.teacherName || appConfig.teacherName === "أسرة الرياضيات") {
+            appConfig.teacherName = "أ. محمد خليل";
+        }
+        if (!appConfig.questions || appConfig.questions.length === 0) {
+            appConfig.questions = [...defaultQuestions];
+        }
+
+        let tempTeams = [...appConfig.teams];
+        let tempQuestions = [...appConfig.questions];
+
+        function applyAppConfig() {
+            document.querySelectorAll('.ui-school-name').forEach(el => el.textContent = appConfig.schoolName);
+            document.querySelectorAll('.ui-comp-title').forEach(el => el.textContent = appConfig.compTitle);
+            document.querySelectorAll('.ui-subject-grade').forEach(el => el.textContent = appConfig.subjectGrade);
+            document.querySelectorAll('.ui-subject-name').forEach(el => el.textContent = appConfig.subjectName || "مادة الرياضيات");
+            document.querySelectorAll('.ui-grade-name').forEach(el => el.textContent = appConfig.gradeName || "الصف السادس الأساسي");
+            document.querySelectorAll('.ui-dept-name').forEach(el => el.textContent = appConfig.deptName);
+            
+            const tName = appConfig.teacherName ? appConfig.teacherName.trim() : "أ. محمد خليل";
+            document.querySelectorAll('.ui-teacher-name').forEach(el => el.textContent = `إعداد / ${tName}`);
+            document.querySelectorAll('.ui-teacher-header').forEach(el => el.textContent = `إعداد / ${tName}`);
+            
+            document.getElementById('pageTitle').textContent = `${appConfig.compTitle} - ${appConfig.schoolName}`;
+            
+            teams = [...appConfig.teams];
+            document.getElementById('timer').textContent = appConfig.timerSec;
+            
+            const totalQ = Math.min(appConfig.maxQuestions || appConfig.questions.length, appConfig.questions.length);
+            document.getElementById('qTotal').textContent = totalQ;
+        }
+
+        function switchSettingsTab(tab) {
+            const tabGen = document.getElementById('tabGeneral');
+            const tabQ = document.getElementById('tabQuestions');
+            const btnGen = document.getElementById('tabBtnGeneral');
+            const btnQ = document.getElementById('tabBtnQuestions');
+
+            if(tab === 'general') {
+                tabGen.classList.remove('hidden');
+                tabQ.classList.add('hidden');
+                btnGen.className = "px-4 py-1.5 rounded-lg font-bold text-sm bg-yellow-500 text-slate-900";
+                btnQ.className = "px-4 py-1.5 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700";
+            } else {
+                tabGen.classList.add('hidden');
+                tabQ.classList.remove('hidden');
+                btnQ.className = "px-4 py-1.5 rounded-lg font-bold text-sm bg-yellow-500 text-slate-900";
+                btnGen.className = "px-4 py-1.5 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700";
+            }
+        }
+
+        function openSettingsModal() {
+            document.getElementById('cfgTeacherName').value = appConfig.teacherName || "";
+            document.getElementById('cfgSchoolName').value = appConfig.schoolName;
+            document.getElementById('cfgCompTitle').value = appConfig.compTitle;
+            document.getElementById('cfgSubjectGrade').value = appConfig.subjectGrade;
+            document.getElementById('cfgDeptName').value = appConfig.deptName;
+            document.getElementById('cfgTimer').value = appConfig.timerSec;
+            
+            tempTeams = [...appConfig.teams];
+            tempQuestions = JSON.parse(JSON.stringify(appConfig.questions));
+            
+            document.getElementById('cfgMaxQuestions').value = Math.min(appConfig.maxQuestions || tempQuestions.length, tempQuestions.length);
+
+            renderTeamsFields();
+            renderQuestionsList();
+            switchSettingsTab('general');
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function renderTeamsFields() {
+            const container = document.getElementById('teamsContainer');
+            container.innerHTML = '';
+            tempTeams.forEach((teamName, idx) => {
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-1.5 bg-slate-900/60 p-2 rounded-xl border border-emerald-800/40";
+                div.innerHTML = `
+                    <span class="text-xs text-yellow-400 font-bold min-w-[20px]">#${idx+1}</span>
+                    <input type="text" value="${teamName}" oninput="tempTeams[${idx}]=this.value" class="w-full bg-slate-800 border border-emerald-700/60 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-yellow-400">
+                    ${tempTeams.length > 2 ? `<button onclick="removeTeamField(${idx})" class="text-red-400 hover:text-red-300 p-1 font-bold text-sm" title="حذف الفريق">&times;</button>` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addTeamField() {
+            if(tempTeams.length >= 12) {
+                alert("الحد الأقصى للفرق هو 12 فريقاً.");
+                return;
+            }
+            tempTeams.push(`فريق المجموعة ${tempTeams.length + 1} 🌟`);
+            renderTeamsFields();
+        }
+
+        function removeTeamField(idx) {
+            if(tempTeams.length <= 2) {
+                alert("يجب أن يكون هناك فريقان على الأقل للتنافس.");
+                return;
+            }
+            tempTeams.splice(idx, 1);
+            renderTeamsFields();
+        }
+
+        function renderQuestionsList() {
+            document.getElementById('tabQCount').textContent = tempQuestions.length;
+            const container = document.getElementById('questionsListContainer');
+            container.innerHTML = '';
+            
+            tempQuestions.forEach((qObj, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center p-2.5 rounded-xl bg-slate-900/80 border border-emerald-800/40 text-xs";
+                item.innerHTML = `
+                    <div class="flex-1 pr-1 truncate">
+                        <span class="font-bold text-yellow-400 ml-1">س${idx+1}:</span>
+                        <span class="text-white">${qObj.q}</span>
+                        <span class="text-emerald-400 block text-[11px] mt-0.5">الإجابة: ${qObj.o[qObj.a]}</span>
+                    </div>
+                    <button onclick="removeQuestion(${idx})" class="text-red-400 hover:text-red-300 px-2 py-1 bg-red-950/60 rounded-lg border border-red-800 font-bold">حذف</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function openNewQuestionForm() {
+            document.getElementById('newQuestionBox').classList.remove('hidden');
+            document.getElementById('customQText').value = '';
+            document.getElementById('customOp0').value = '';
+            document.getElementById('customOp1').value = '';
+            document.getElementById('customOp2').value = '';
+            document.getElementById('customOp3').value = '';
+            document.getElementById('customCorrectAns').value = '0';
+        }
+
+        function saveNewQuestion() {
+            const q = document.getElementById('customQText').value.trim();
+            const op0 = document.getElementById('customOp0').value.trim();
+            const op1 = document.getElementById('customOp1').value.trim();
+            const op2 = document.getElementById('customOp2').value.trim();
+            const op3 = document.getElementById('customOp3').value.trim();
+            const a = parseInt(document.getElementById('customCorrectAns').value);
+
+            if(!q || !op0 || !op1 || !op2 || !op3) {
+                alert("يرجى ملء جميع حقول السؤال والخيارات الأربعة.");
+                return;
+            }
+
+            tempQuestions.push({ q, o: [op0, op1, op2, op3], a });
+            document.getElementById('newQuestionBox').classList.add('hidden');
+            renderQuestionsList();
+            document.getElementById('cfgMaxQuestions').value = tempQuestions.length;
+        }
+
+        function removeQuestion(idx) {
+            if(tempQuestions.length <= 4) {
+                alert("يجب إبقاء 4 أسئلة على الأقل في البنك.");
+                return;
+            }
+            tempQuestions.splice(idx, 1);
+            renderQuestionsList();
+        }
+
+        function saveCustomSettings() {
+            appConfig.teacherName = document.getElementById('cfgTeacherName').value.trim() || defaultAppConfig.teacherName;
+            appConfig.schoolName = document.getElementById('cfgSchoolName').value.trim() || defaultAppConfig.schoolName;
+            appConfig.compTitle = document.getElementById('cfgCompTitle').value.trim() || defaultAppConfig.compTitle;
+            appConfig.subjectGrade = document.getElementById('cfgSubjectGrade').value.trim() || defaultAppConfig.subjectGrade;
+            appConfig.deptName = document.getElementById('cfgDeptName').value.trim() || defaultAppConfig.deptName;
+            appConfig.timerSec = parseInt(document.getElementById('cfgTimer').value) || 60;
+            
+            appConfig.teams = tempTeams.map(t => t.trim()).filter(t => t.length > 0);
+            if(appConfig.teams.length < 2) appConfig.teams = [...defaultAppConfig.teams];
+
+            appConfig.questions = [...tempQuestions];
+            let maxQ = parseInt(document.getElementById('cfgMaxQuestions').value) || appConfig.questions.length;
+            if(maxQ > appConfig.questions.length) maxQ = appConfig.questions.length;
+            if(maxQ < 1) maxQ = 1;
+            appConfig.maxQuestions = maxQ;
+
+            localStorage.setItem('quizCustomConfig_v2', JSON.stringify(appConfig));
+            applyAppConfig();
+            closeSettingsModal();
+        }
+
+        function resetDefaultSettings() {
+            if(confirm("هل تريد استعادة الإعدادات والأسئلة الافتراضية الأصلية بالكامل؟")) {
+                localStorage.removeItem('quizCustomConfig_v2');
+                appConfig = JSON.parse(JSON.stringify(defaultAppConfig));
+                applyAppConfig();
+                closeSettingsModal();
+            }
+        }
+
+        const bgAudio = document.getElementById('bgMusic');
+        bgAudio.volume = 1.0;
+
+        const sfx = {
+            correct: new Audio('correct.mp3'),
+            wrong: new Audio('wrong.mp3'),
+            spin: new Audio('spin.mp3')
+        };
+
+        let isMuted = false;
+
+        bgAudio.addEventListener('error', () => {
+            document.getElementById('filePickerLabel').classList.remove('hidden');
+        });
+
+        function playBackgroundMusic() {
+            if (isMuted) return;
+            bgAudio.volume = 1.0;
+            const playPromise = bgAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(err => {
+                    document.getElementById('filePickerLabel').classList.remove('hidden');
+                });
+            }
+        }
+
+        function loadCustomAudio(input) {
+            if (input.files && input.files[0]) {
+                const fileURL = URL.createObjectURL(input.files[0]);
+                bgAudio.src = fileURL;
+                bgAudio.load();
+                if (!isMuted) bgAudio.play();
+                document.getElementById('filePickerLabel').classList.add('hidden');
+            }
+        }
+
+        let teams = [...appConfig.teams];
+        let rotation = 0; 
+        let isSpinning = false;
+        let totalPlayQuestions = 32;
+        let state = { qList: [], currentQ: null, scores: [], turn: 0, qCount: 0, timer: null };
+
+        const colors = ['#047857', '#b91c1c', '#d97706', '#0f766e', '#854d0e', '#15803d', '#991b1b', '#0369a1'];
+        const charNames = ['char1', 'char2', 'char3', 'char4', 'char5', 'char6', 'char7', 'char8'];
+
+        window.onload = () => {
+            applyAppConfig();
+
+            const svgSegments = document.getElementById('wheelSegments');
+            const svgImages = document.getElementById('wheelImages');
+            const defs = document.getElementById('wheelDefs');
+            const count = 8; 
+            const slice = 360 / count;
+
+            for(let i=0; i<count; i++) {
+                const start = i * slice; 
+                const end = (i+1) * slice;
+                const x1 = 200 + 198 * Math.cos(Math.PI * (start-90)/180); 
+                const y1 = 200 + 198 * Math.sin(Math.PI * (start-90)/180);
+                const x2 = 200 + 198 * Math.cos(Math.PI * (end-90)/180); 
+                const y2 = 200 + 198 * Math.sin(Math.PI * (end-90)/180);
+                
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", `M200,200 L${x1},${y1} A198,198 0 0,1 ${x2},${y2} Z`);
+                path.setAttribute("fill", colors[i % colors.length]); 
+                path.setAttribute("stroke", "#d4af37"); 
+                path.setAttribute("stroke-width", "2");
+                svgSegments.appendChild(path);
+                
+                const mid = start + slice/2;
+                const imageRadius = 135; 
+                const tx = 200 + imageRadius * Math.cos(Math.PI * (mid-90)/180); 
+                const ty = 200 + imageRadius * Math.sin(Math.PI * (mid-90)/180);
+
+                const clip = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+                clip.setAttribute("id", `clip-char-${i}`);
+                const circleClip = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circleClip.setAttribute("cx", tx);
+                circleClip.setAttribute("cy", ty);
+                circleClip.setAttribute("r", "25");
+                clip.appendChild(circleClip);
+                defs.appendChild(clip);
+
+                const borderCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                borderCircle.setAttribute("cx", tx);
+                borderCircle.setAttribute("cy", ty);
+                borderCircle.setAttribute("r", "27");
+                borderCircle.setAttribute("fill", "#091a16");
+                borderCircle.setAttribute("stroke", "#facc15");
+                borderCircle.setAttribute("stroke-width", "2.5");
+                svgImages.appendChild(borderCircle);
+
+                const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                const baseName = charNames[i];
+                img.setAttribute("x", tx - 25);
+                img.setAttribute("y", ty - 25);
+                img.setAttribute("width", "50");
+                img.setAttribute("height", "50");
+                img.setAttribute("clip-path", `url(#clip-char-${i})`);
+                img.setAttribute("preserveAspectRatio", "xMidYMid slice");
+                
+                img.href.baseVal = `${baseName}.png`;
+                img.addEventListener('error', function errHandler() {
+                    if (this.href.baseVal.endsWith('.png')) {
+                        this.href.baseVal = `${baseName}.jpg`;
+                    } else if (this.href.baseVal.endsWith('.jpg')) {
+                        this.href.baseVal = `${baseName}.jpeg`;
+                    } else if (this.href.baseVal.endsWith('.jpeg')) {
+                        this.href.baseVal = `${baseName}.webp`;
+                    }
+                });
+
+                img.setAttribute("transform", `rotate(${mid + 90}, ${tx}, ${ty})`);
+                borderCircle.setAttribute("transform", `rotate(${mid + 90}, ${tx}, ${ty})`);
+
+                svgImages.appendChild(img);
+            }
+        };
+
+        function startGame() {
+            playBackgroundMusic();
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            const gScreen = document.getElementById('gameScreen');
+            gScreen.classList.remove('hidden');
+            gScreen.classList.add('grid');
+            
+            teams = [...appConfig.teams];
+            state.scores = new Array(teams.length).fill(0);
+            state.turn = 0;
+            state.qCount = 0;
+
+            const shuffled = [...appConfig.questions].sort(() => Math.random() - 0.5);
+            totalPlayQuestions = Math.min(appConfig.maxQuestions || shuffled.length, shuffled.length);
+            state.qList = shuffled.slice(0, totalPlayQuestions);
+            
+            document.getElementById('qTotal').textContent = totalPlayQuestions;
+            document.getElementById('qNum').textContent = "1";
+
+            updateUI();
+        }
+
+        function triggerSpin() {
+            if(isSpinning || state.qList.length === 0) return;
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            
+            playSfx('spin');
+
+            const extraSpins = 1800; 
+            const randomAngle = Math.floor(Math.random() * 360);
+            rotation += extraSpins + randomAngle;
+            document.getElementById('wheel').style.transform = `rotate(${rotation}deg)`;
+            
+            setTimeout(() => { 
+                stopSfx('spin');
+                setTimeout(() => { 
+                    isSpinning = false; 
+                    document.getElementById('spinBtn').disabled = false; 
+                    showQuestion(); 
+                }, 1200); 
+            }, 4000); 
+        }
+
+        function showQuestion() {
+            state.currentQ = state.qList.pop();
+            const qSection = document.getElementById('questionSection');
+            const wheelSection = document.getElementById('wheelSection');
+            
+            wheelSection.style.display = 'none'; 
+            document.getElementById('nextBtn').classList.add('hidden'); 
+            qSection.classList.remove('hidden');
+            qSection.classList.add('flex');
+
+            document.getElementById('qText').textContent = state.currentQ.q;
+            const grid = document.getElementById('optionsGrid'); 
+            grid.innerHTML = '';
+            
+            let ops = state.currentQ.o.map((txt, i) => ({txt, i})).sort(() => Math.random() - 0.5);
+
+            ops.forEach((op) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option-btn w-full';
+                btn.textContent = op.txt; 
+                btn.onclick = () => checkAnswer(op.i, btn);
+                grid.appendChild(btn);
+            });
+            startTimer();
+        }
+
+        function startTimer() {
+            let t = appConfig.timerSec || 60; 
+            document.getElementById('timer').textContent = t;
+            if(state.timer) clearInterval(state.timer);
+            state.timer = setInterval(() => { 
+                t--; 
+                document.getElementById('timer').textContent = t; 
+                if(t <= 0) { clearInterval(state.timer); forceShowAnswer(); } 
+            }, 1000);
+        }
+
+        function forceShowAnswer() {
+            const btns = document.querySelectorAll('.quiz-option-btn');
+            btns.forEach(b => { 
+                b.disabled = true; 
+                if(b.textContent === state.currentQ.o[state.currentQ.a]) b.classList.add('correct'); 
+            });
+            playSfx('wrong');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function checkAnswer(idx, btn) {
+            clearInterval(state.timer);
+            const btns = document.querySelectorAll('.quiz-option-btn');
+            btns.forEach(b => b.disabled = true);
+            
+            if(idx === state.currentQ.a) {
+                btn.classList.add('correct'); 
+                playSfx('correct');
+                fireConfetti();
+                state.scores[state.turn]++;
+            } else {
+                btn.classList.add('wrong'); 
+                playSfx('wrong');
+                btns.forEach(b => { if(b.textContent === state.currentQ.o[state.currentQ.a]) b.classList.add('correct'); });
+            }
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function resolveAnswer() {
+            state.qCount++; 
+            state.turn = (state.turn + 1) % teams.length;
+            
+            if(state.qCount >= totalPlayQuestions || state.qList.length === 0) {
+                endGame();
+            } else {
+                const qSection = document.getElementById('questionSection');
+                qSection.classList.add('hidden');
+                qSection.classList.remove('flex');
+                document.getElementById('wheelSection').style.display = 'flex';
+                document.getElementById('qNum').textContent = state.qCount + 1;
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('currentTeamName').textContent = teams[state.turn];
+            const board = document.getElementById('scoreboard'); 
+            board.innerHTML = '';
+            teams.forEach((t, i) => {
+                const div = document.createElement('div');
+                const isCurrent = (i === state.turn);
+                div.className = `flex justify-between items-center px-3 py-2.5 rounded-xl border transition-all ${
+                    isCurrent 
+                    ? 'bg-yellow-500/30 border-yellow-400 text-yellow-300 font-black shadow-lg backdrop-blur-md' 
+                    : 'bg-emerald-950/70 border-emerald-700/50 text-slate-200 backdrop-blur-sm'
+                }`;
+                div.innerHTML = `<span class="drop-shadow">${t}</span><span class="font-black text-xl text-yellow-400 drop-shadow">${state.scores[i] || 0}</span>`;
+                board.appendChild(div);
+            });
+        }
+
+        function endGame() {
+            document.getElementById('gameScreen').classList.add('hidden'); 
+            document.getElementById('resultScreen').classList.remove('hidden'); 
+            
+            fireConfetti();
+            setTimeout(fireConfetti, 500);
+
+            const ranking = teams.map((t, i) => ({name: t, s: state.scores[i] || 0})).sort((a,b) => b.s - a.s);
+            const rankDiv = document.getElementById('finalRanking');
+            rankDiv.innerHTML = '';
+            ranking.forEach((r, i) => {
+                rankDiv.innerHTML += `
+                    <div class="flex justify-between items-center p-3 rounded-xl bg-emerald-950/60 border border-yellow-500/30">
+                        <span class="font-bold text-white">#${i+1} ${r.name}</span>
+                        <span class="font-black text-xl text-yellow-400">${r.s} نقطة</span>
+                    </div>`;
+            });
+        }
+
+        function playSfx(name) { 
+            if(!isMuted && sfx[name]) { 
+                sfx[name].currentTime = 0; 
+                let p = sfx[name].play(); 
+                if(p) p.catch(()=>{}); 
+            } 
+        }
+
+        function stopSfx(name) {
+            if(sfx[name]) {
+                sfx[name].pause();
+                sfx[name].currentTime = 0;
+            }
+        }
+
+        function toggleMute() { 
+            isMuted = !isMuted; 
+            bgAudio.muted = isMuted;
+
+            Object.values(sfx).forEach(aud => {
+                aud.muted = isMuted;
+            });
+
+            document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔊'; 
+            
+            if(!isMuted && bgAudio.paused) {
+                bgAudio.play().catch(()=>{});
+            }
+        }
+    </script>
+</body>
+</html>
