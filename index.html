@@ -538,7 +538,7 @@
             }
         }
 
-        // الأسئلة الـ 32 الافتراضية
+        // الأسئلة الـ 32 المستخرجة من الكود الأول
         const defaultQuestions = [
             { q: "أي من الأعداد الآتية هو مضاعف للعدد 8؟", o: ["18", "24", "68", "30"], a: 1 },
             { q: "أي من الأعداد الآتية ليس من مضاعفات العدد 8؟", o: ["48", "56", "68", "72"], a: 2 },
@@ -592,9 +592,9 @@
         if (!appConfig.teacherName || appConfig.teacherName === "أسرة الرياضيات") {
             appConfig.teacherName = "أ. محمد خليل";
         }
-        if (!appConfig.questions || appConfig.questions.length === 0) {
-            appConfig.questions = [...defaultQuestions];
-        }
+        
+        // استبدال الأسئلة المحفوظة في التخزين المحلي بأسئلة الكود الأول الجديدة
+        appConfig.questions = [...defaultQuestions];
 
         let tempTeams = [...appConfig.teams];
         let tempQuestions = [...appConfig.questions];
