@@ -8,6 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- مكتبة القصاصات الاحتفالية -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- مكتبة MathJax لكتابة الصيغ والرموز الرياضية العربية والعالمية -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         :root {
             --gold-primary: #d4af37;
@@ -72,7 +84,6 @@
             border-radius: 24px;
         }
 
-        /* خلفية مخصصة لمستطيل الفرق ولوحة المتصدرين مع صورة champ */
         .champ-bg-card {
             background-color: rgba(11, 28, 24, 0.9);
             background-image: 
@@ -116,14 +127,16 @@
             color: #f1f5f9;
             box-shadow: 0 4px 0 rgba(7, 20, 17, 0.9);
             transition: all 0.15s ease;
-            min-height: 4.2rem;
+            min-height: 4.5rem;
             font-size: 1.15rem;
             font-weight: 700;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 0.75rem 1.25rem;
             cursor: pointer;
+            gap: 0.4rem;
         }
         .quiz-option-btn:hover:not(:disabled) {
             background: rgba(27, 66, 57, 0.95);
@@ -187,16 +200,26 @@
             box-shadow: 0 0 0 8px #d4af37, 0 0 35px rgba(212, 175, 55, 0.4);
         }
 
-        ::-webkit-scrollbar {
-            width: 7px;
+        .math-symbol-btn {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: #fde047;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.15s ease;
+            white-space: nowrap;
         }
-        ::-webkit-scrollbar-track {
-            background: rgba(11, 28, 24, 0.5);
-        }
-        ::-webkit-scrollbar-thumb {
+        .math-symbol-btn:hover {
             background: #d4af37;
-            border-radius: 4px;
+            color: #0f172a;
+            transform: scale(1.05);
         }
+
+        ::-webkit-scrollbar { width: 7px; }
+        ::-webkit-scrollbar-track { background: rgba(11, 28, 24, 0.5); }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
     </style>
 </head>
 <body class="h-full flex flex-col justify-between p-3 md:p-6 pb-20 md:pb-24">
@@ -213,7 +236,7 @@
     <div class="omani-bg"></div>
     <div class="omani-pattern"></div>
 
-    <!-- شريط الرأس الدائم في جميع صفحات المسابقة -->
+    <!-- شريط الرأس -->
     <header class="w-full max-w-7xl mx-auto luxury-card px-4 py-2.5 flex items-center justify-between border-b-2 border-yellow-500/50 shadow-lg z-30 mb-4">
         <div class="flex items-center gap-3">
             <img src="school.png" onerror="tryNextExt(this, ['school.jpg', 'school.jpeg', 'school.webp'])" alt="شعار المدرسة" class="circle-logo">
@@ -240,12 +263,12 @@
         </div>
     </header>
 
-    <!-- منطقة التحكم بالصوت -->
+    <!-- التحكم بالصوت -->
     <div class="fixed bottom-4 left-4 z-50 flex items-center gap-2">
         <button id="muteBtn" onclick="toggleMute()" title="كتم / تشغيل الصوت" class="bg-emerald-950/90 text-yellow-400 p-3.5 rounded-full shadow-2xl border-2 border-yellow-500/50 text-xl hover:scale-110 active:scale-95 transition-transform cursor-pointer">
             🔊
         </button>
-        <label id="filePickerLabel" title="اضغط هنا لتحديد ملف الصوت من جهازك إذا لم يعمل تلقائياً" class="hidden cursor-pointer bg-red-950/90 hover:bg-red-900 border border-yellow-400/60 text-yellow-300 text-xs px-3 py-2 rounded-xl shadow-lg transition-colors">
+        <label id="filePickerLabel" title="حدد ملف الصوت من جهازك" class="hidden cursor-pointer bg-red-950/90 hover:bg-red-900 border border-yellow-400/60 text-yellow-300 text-xs px-3 py-2 rounded-xl shadow-lg transition-colors">
             📁 اختر ملف back
             <input type="file" id="audioPicker" accept="audio/*" class="hidden" onchange="loadCustomAudio(this)">
         </label>
@@ -275,17 +298,17 @@
             </button>
 
             <button onclick="openSettingsModal()" class="flex items-center justify-center gap-2 text-sm font-bold text-yellow-300/90 hover:text-yellow-300 bg-emerald-950/70 hover:bg-emerald-900/90 border border-yellow-500/40 px-5 py-2 rounded-xl transition-all cursor-pointer">
-                <span>⚙️</span> تخصيص الفرق وبنك الأسئلة والمعلومات
+                <span>⚙️</span> تخصيص الفرق وبنك الأسئلة والصور والمعادلات
             </button>
         </div>
     </main>
 
-    <!-- نافذة منبثقة: إعدادات وتخصيص المسابقة -->
+    <!-- لوحة التحكم وإضافة الأسئلة والصور والرموز -->
     <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="luxury-card max-w-3xl w-full p-6 text-right border-2 border-yellow-500/60 max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-yellow-500/40 pb-3 mb-4 sticky top-0 bg-[#0b1c18]/95 z-10 backdrop-blur">
                 <h3 class="text-xl font-black text-yellow-400 flex items-center gap-2">
-                    <span>⚙️</span> لوحة التحكم والإعدادات المتقدمة
+                    <span>⚙️</span> لوحة التحكم والأسئلة والرموز الرياضية
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-red-400 text-3xl font-bold cursor-pointer">&times;</button>
             </div>
@@ -300,7 +323,7 @@
                 </button>
             </div>
 
-            <!-- تبويب 1: المعلومات والفرق -->
+            <!-- تبويب 1 -->
             <div id="tabGeneral" class="space-y-4">
                 <div class="bg-yellow-500/10 border border-yellow-500/30 p-2.5 rounded-xl">
                     <label class="flex items-center gap-1.5 text-xs md:text-sm font-black text-yellow-300 mb-1">
@@ -346,7 +369,7 @@
                 </div>
             </div>
 
-            <!-- تبويب 2: بنك الأسئلة المخصص -->
+            <!-- تبويب 2: بنك الأسئلة مع الصور والرموز الرياضية -->
             <div id="tabQuestions" class="hidden space-y-4">
                 <div class="bg-emerald-950/70 border border-yellow-500/30 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
@@ -355,38 +378,136 @@
                         <span class="text-xs text-slate-400">سؤال</span>
                     </div>
                     <button onclick="openNewQuestionForm()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow">
-                        <span>➕ إضافة سؤال جديد</span>
+                        <span>➕ إضافة سؤال مدعم بالصور والرياضيات</span>
                     </button>
                 </div>
 
+                <!-- نموذج إضافة سؤال جديد متطور -->
                 <div id="newQuestionBox" class="hidden bg-slate-900/95 border-2 border-yellow-500/60 p-4 rounded-2xl space-y-3">
-                    <h4 class="text-sm font-bold text-yellow-300">✍️ إضافة سؤال جديد</h4>
-                    <input type="text" id="customQText" placeholder="نص السؤال..." class="w-full bg-slate-800 border border-emerald-700 rounded-xl px-3 py-2 text-white text-sm">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <span class="text-slate-400">الخيار 1 (أ):</span>
-                            <input type="text" id="customOp0" placeholder="الخيار الأول" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
+                    <h4 class="text-sm font-bold text-yellow-300 flex items-center gap-2">
+                        <span>✍️</span> إضافة سؤال مع صور ومعادلات رياضية
+                    </h4>
+
+                    <!-- شريط إدراج الرموز والمعادلات الرياضية العربية -->
+                    <div class="bg-emerald-950/80 border border-yellow-500/30 p-2 rounded-xl">
+                        <div class="text-[11px] font-bold text-yellow-300 mb-1.5 flex items-center justify-between">
+                            <span>📐 لوحة الرموز السريعة (اضغط على الرمز لإدراجه في الحقل المحدد):</span>
+                            <span class="text-slate-400 text-[10px]">يدعم LaTeX و MathJax تلقائياً داخل $...$</span>
                         </div>
-                        <div>
-                            <span class="text-slate-400">الخيار 2 (ب):</span>
-                            <input type="text" id="customOp1" placeholder="الخيار الثاني" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
-                        </div>
-                        <div>
-                            <span class="text-slate-400">الخيار 3 (ج):</span>
-                            <input type="text" id="customOp2" placeholder="الخيار الثالث" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
-                        </div>
-                        <div>
-                            <span class="text-slate-400">الخيار 4 (د):</span>
-                            <input type="text" id="customOp3" placeholder="الخيار الرابع" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white mt-1">
+                        <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1">
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('\\frac{س}{ص}')">$\frac{س}{ص}$ كسر</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('\\sqrt{س}')">$\sqrt{س}$ جذر</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('س^2')">$س^2$ مربع</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('س^3')">$س^3$ مكعب</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('\\pi')">$\pi$ (ط)</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\times ')">$\times$ ضرب</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\div ')">$\div$ قسمة</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\approx ')">$\approx$ تقريباً</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\le ')">$\le$ أصغر من أو يساوي</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\ge ')">$\ge$ أكبر من أو يساوي</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\ne ')">$\ne$ لا يساوي</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\pm ')">$\pm$ موجب/سالب</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('^{\\circ}')">$\degree$ درجة</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('\\angle أ ب ج')">$\angle$ زاوية</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('\\triangle')">$\triangle$ مثلث</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('\\parallel')">$\parallel$ يوازي</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath('\\perp')">$\perp$ يعامد</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\in ')">$\in$ ينتمي</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\notin ')">$\notin$ لا ينتمي</button>
+                            <button type="button" class="math-symbol-btn" onclick="insertMath(' \\subset ')">$\subset$ محتواة</button>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
+
+                    <!-- حقل نص السؤال وصورته -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-300">نص السؤال الرياضي:</label>
+                        <input type="text" id="customQText" onfocus="activeTargetInput=this" placeholder="مثال: أوجد ناتج العملية: $\frac{3}{4} + \frac{1}{2}$ ..." class="w-full bg-slate-800 border border-emerald-700 rounded-xl px-3 py-2 text-white text-sm">
+                        
+                        <!-- إرفاق صورة للسؤال -->
+                        <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                            <span class="text-yellow-400 font-bold">🖼️ صورة السؤال (اختياري):</span>
+                            <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-yellow-300 px-2.5 py-1 rounded border border-yellow-500/40">
+                                📂 رفع من الجهاز
+                                <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'qImg')">
+                            </label>
+                            <input type="text" id="qImgUrl" placeholder="أو الصق رابط صورة (URL)" oninput="updateImgPreview('qImg', this.value)" class="flex-1 bg-slate-800 border border-slate-700 rounded px-2 py-1 text-white text-xs">
+                            <button type="button" onclick="clearImage('qImg')" class="text-red-400 hover:text-red-300 font-bold">✕ إزالة</button>
+                        </div>
+                        <div id="qImgPreviewBox" class="hidden mt-1 p-1 bg-black/40 border border-emerald-800/60 rounded-lg inline-block">
+                            <img id="qImgPreview" src="" class="max-h-24 rounded object-contain" alt="معاينة صورة السؤال">
+                        </div>
+                    </div>
+
+                    <!-- الخيارات الأربعة مع إمكانية إرفاق صورة لكل خيار -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
+                        <!-- الخيار 1 -->
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <span class="text-slate-300 font-bold block mb-1">الخيار 1 (أ):</span>
+                            <input type="text" id="customOp0" onfocus="activeTargetInput=this" placeholder="نص الخيار 1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white">
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                <label class="cursor-pointer bg-slate-900 text-yellow-300 px-2 py-0.5 rounded text-[10px] border border-yellow-500/30">
+                                    🖼️ رفع صورة
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'op0Img')">
+                                </label>
+                                <input type="text" id="op0ImgUrl" placeholder="رابط URL" oninput="updateImgPreview('op0Img', this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-white text-[10px]">
+                                <button type="button" onclick="clearImage('op0Img')" class="text-red-400 text-[10px]">✕</button>
+                            </div>
+                            <img id="op0ImgPreview" src="" class="hidden max-h-16 mt-1 rounded border border-emerald-700 object-contain">
+                        </div>
+
+                        <!-- الخيار 2 -->
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <span class="text-slate-300 font-bold block mb-1">الخيار 2 (ب):</span>
+                            <input type="text" id="customOp1" onfocus="activeTargetInput=this" placeholder="نص الخيار 2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white">
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                <label class="cursor-pointer bg-slate-900 text-yellow-300 px-2 py-0.5 rounded text-[10px] border border-yellow-500/30">
+                                    🖼️ رفع صورة
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'op1Img')">
+                                </label>
+                                <input type="text" id="op1ImgUrl" placeholder="رابط URL" oninput="updateImgPreview('op1Img', this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-white text-[10px]">
+                                <button type="button" onclick="clearImage('op1Img')" class="text-red-400 text-[10px]">✕</button>
+                            </div>
+                            <img id="op1ImgPreview" src="" class="hidden max-h-16 mt-1 rounded border border-emerald-700 object-contain">
+                        </div>
+
+                        <!-- الخيار 3 -->
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <span class="text-slate-300 font-bold block mb-1">الخيار 3 (ج):</span>
+                            <input type="text" id="customOp2" onfocus="activeTargetInput=this" placeholder="نص الخيار 3" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white">
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                <label class="cursor-pointer bg-slate-900 text-yellow-300 px-2 py-0.5 rounded text-[10px] border border-yellow-500/30">
+                                    🖼️ رفع صورة
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'op2Img')">
+                                </label>
+                                <input type="text" id="op2ImgUrl" placeholder="رابط URL" oninput="updateImgPreview('op2Img', this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-white text-[10px]">
+                                <button type="button" onclick="clearImage('op2Img')" class="text-red-400 text-[10px]">✕</button>
+                            </div>
+                            <img id="op2ImgPreview" src="" class="hidden max-h-16 mt-1 rounded border border-emerald-700 object-contain">
+                        </div>
+
+                        <!-- الخيار 4 -->
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <span class="text-slate-300 font-bold block mb-1">الخيار 4 (د):</span>
+                            <input type="text" id="customOp3" onfocus="activeTargetInput=this" placeholder="نص الخيار 4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white">
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                <label class="cursor-pointer bg-slate-900 text-yellow-300 px-2 py-0.5 rounded text-[10px] border border-yellow-500/30">
+                                    🖼️ رفع صورة
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'op3Img')">
+                                </label>
+                                <input type="text" id="op3ImgUrl" placeholder="رابط URL" oninput="updateImgPreview('op3Img', this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-white text-[10px]">
+                                <button type="button" onclick="clearImage('op3Img')" class="text-red-400 text-[10px]">✕</button>
+                            </div>
+                            <img id="op3ImgPreview" src="" class="hidden max-h-16 mt-1 rounded border border-emerald-700 object-contain">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
                         <label class="text-xs font-bold text-emerald-400">الإجابة الصحيحة:</label>
                         <select id="customCorrectAns" class="bg-slate-800 border border-emerald-600 text-white text-xs rounded-lg px-3 py-1.5">
-                            <option value="0">الخيار 1</option>
-                            <option value="1">الخيار 2</option>
-                            <option value="2">الخيار 3</option>
-                            <option value="3">الخيار 4</option>
+                            <option value="0">الخيار 1 (أ)</option>
+                            <option value="1">الخيار 2 (ب)</option>
+                            <option value="2">الخيار 3 (ج)</option>
+                            <option value="3">الخيار 4 (د)</option>
                         </select>
                         <button onclick="saveNewQuestion()" class="btn-action-gold text-xs px-4 py-1.5 font-bold mr-auto">حفظ السؤال</button>
                         <button onclick="document.getElementById('newQuestionBox').classList.add('hidden')" class="bg-slate-800 text-slate-300 text-xs px-3 py-1.5 rounded-lg">إلغاء</button>
@@ -419,7 +540,6 @@
                 <span id="currentTeamName" class="text-xl md:text-2xl font-black text-white bg-yellow-500/20 border border-yellow-400/30 px-4 py-1 rounded-xl">فريق الصقور</span>
             </div>
 
-            <!-- مستطيل أسماء الفرق ولوحة المتصدرين مع خلفية champ -->
             <div class="champ-bg-card p-4 flex-1 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between border-b border-yellow-500/40 pb-2 mb-3">
@@ -437,7 +557,7 @@
             </div>
         </aside>
 
-        <!-- مربع السؤال الأكبر -->
+        <!-- مربع السؤال والخيارات مع دعم الصور والمعادلات -->
         <section class="lg:col-span-8 challenge-container p-4 md:p-8 flex flex-col items-center justify-center relative min-h-[460px]">
             <div id="wheelSection" class="w-full flex flex-col items-center justify-center py-2">
                 <div class="relative mb-6">
@@ -468,16 +588,21 @@
             </div>
 
             <div id="questionSection" class="hidden w-full flex-col items-center justify-center">
-                <div class="mb-4 flex justify-center">
+                <div class="mb-3 flex justify-center">
                     <div class="w-16 h-16 rounded-full bg-emerald-950/90 border-4 border-yellow-400 flex items-center justify-center shadow-lg">
                         <span id="timer" class="text-2xl font-black text-yellow-400">60</span>
                     </div>
                 </div>
 
-                <div class="w-full bg-emerald-950/80 border border-yellow-500/30 rounded-2xl p-4 md:p-6 mb-5 text-center shadow-md backdrop-blur-sm">
-                    <p id="qText" class="text-lg md:text-2xl font-bold text-white leading-relaxed"></p>
+                <!-- بطاقة السؤال ونصّه وصورته -->
+                <div class="w-full bg-emerald-950/80 border border-yellow-500/30 rounded-2xl p-4 md:p-6 mb-4 text-center shadow-md backdrop-blur-sm flex flex-col items-center">
+                    <div id="qImgContainer" class="hidden mb-3">
+                        <img id="qDisplayImg" src="" alt="توضيح السؤال" class="max-h-52 max-w-full rounded-xl border-2 border-yellow-400/60 shadow-lg object-contain bg-black/30">
+                    </div>
+                    <div id="qText" class="text-lg md:text-2xl font-bold text-white leading-relaxed"></div>
                 </div>
 
+                <!-- شبكة الخيارات الأربعة -->
                 <div id="optionsGrid" class="w-full grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
 
                 <button id="nextBtn" onclick="resolveAnswer()" class="hidden btn-action-blue text-lg px-8 py-2.5 mt-2 cursor-pointer">
@@ -503,7 +628,7 @@
         </div>
     </div>
 
-    <!-- الترويسة السفلية الثابتة في جميع صفحات وشاشات المسابقة -->
+    <!-- التذييل -->
     <footer class="fixed bottom-0 left-0 right-0 z-30 pointer-events-none pb-2 pt-3 bg-gradient-to-t from-black/90 via-[#0b1315]/80 to-transparent">
         <div class="w-full max-w-2xl mx-auto px-4 flex justify-center">
             <div class="pointer-events-auto bg-[#0b1c18]/90 backdrop-blur-md border border-yellow-500/40 rounded-full px-5 py-1.5 shadow-xl text-center flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-xs sm:text-sm">
@@ -526,7 +651,6 @@
             }
         }
 
-        // دالة إطلاق قصاصات الاحتفال
         function fireConfetti() {
             if (typeof confetti === 'function') {
                 confetti({
@@ -538,7 +662,14 @@
             }
         }
 
-        // الأسئلة الـ 32 المستخرجة من الكود (الأعداد الأولية والضرب والقسمة على 10 و 100 و 1000)
+        // تحفيز MathJax لتنسيق الرموز داخل أي عنصر
+        function typesetMath(element) {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise(element ? [element] : []).catch(err => console.log(err));
+            }
+        }
+
+        // الأسئلة الافتراضية مع دعم LaTeX
         const defaultQuestions = [
             { q: "ما هو التعريف الصحيح للعدد الأولي؟", o: ["عدد فردي دائماً", "عدد له عاملان مختلفان فقط هما العدد نفسه والواحد", "عدد له أكثر من عاملين", "عدد يقبل القسمة على 2"], a: 1 },
             { q: "لماذا لا يُعد العدد 1 عدداً أولياً؟", o: ["لأنه عدد فردي", "لأن له عاملاً واحداً فقط هو (1)", "لأنه يقبل القسمة على الصفر", "لأنه أصغر الأعداد الكلية"], a: 1 },
@@ -549,29 +680,29 @@
             { q: "أكمل الجملة العددية بوضع أعداد أولية: 30 = ؟ × ؟ × ؟", o: ["2 × 3 × 5", "1 × 5 × 6", "2 × 2 × 7", "3 × 3 × 3"], a: 0 },
             { q: "أكمل الجملة العددية بوضع أعداد أولية: 50 = ؟ × ؟ × ؟", o: ["2 × 5 × 5", "1 × 5 × 10", "2 × 2 × 12", "5 × 5 × 5"], a: 0 },
             { q: "أكمل الجملة العددية بوضع أعداد أولية: 70 = ؟ × ؟ × ؟", o: ["2 × 5 × 7", "1 × 7 × 10", "2 × 3 × 11", "2 × 2 × 17"], a: 0 },
-            { q: "إذا كان (؟)² = 49، وكان المجهول عدداً أولياً، فما قيمته؟", o: ["3", "5", "7", "9"], a: 2 },
-            { q: "إذا كان ؟ + 2 = 5²، وكان المجهول عدداً أولياً، فما قيمته؟", o: ["19", "21", "23", "25"], a: 2 },
-            { q: "إذا كان ؟ + 1 = 2 × 9، وكان المجهول عدداً أولياً، فما قيمته؟", o: ["13", "17", "19", "15"], a: 1 },
-            { q: "إذا كان ؟ + ؟ = 20 (حيث المجهولان عددان أوليان مختلفان أحدهما 3)، فما هو العدد الأولي الآخر؟", o: ["13", "15", "17", "19"], a: 2 },
+            { q: "إذا كان $(؟)^2 = 49$، وكان المجهول عدداً أولياً، فما قيمته؟", o: ["3", "5", "7", "9"], a: 2 },
+            { q: "إذا كان $؟ + 2 = 5^2$، وكان المجهول عدداً أولياً، فما قيمته؟", o: ["19", "21", "23", "25"], a: 2 },
+            { q: "إذا كان $؟ + 1 = 2 \\times 9$، وكان المجهول عدداً أولياً، فما قيمته؟", o: ["13", "17", "19", "15"], a: 1 },
+            { q: "إذا كان $؟ + ؟ = 20$ (حيث المجهولان عددان أوليان مختلفان أحدهما 3)، فما هو العدد الأولي الآخر؟", o: ["13", "15", "17", "19"], a: 2 },
             { q: "يمكن كتابة العدد الزوجي 12 في صورة مجموع عددين أوليين هما:", o: ["4 + 8", "5 + 7", "3 + 9", "6 + 6 (غير أوليين)"], a: 1 },
             { q: "يمكن كتابة العدد الزوجي 18 في صورة مجموع عددين أوليين هما:", o: ["7 + 11", "5 + 13", "كل من (7 + 11) و (5 + 13)", "9 + 9"], a: 2 },
             { q: "أي من الأعداد الآتية ليس عدداً أولياً؟", o: ["29", "31", "33", "37"], a: 2 },
-            { q: "أوجد ناتج العملية: 25 × 100", o: ["250", "2500", "25000", "250000"], a: 1 },
-            { q: "ما العدد المفقود في الجملة العددية: ؟ ÷ 100 = 250", o: ["2500", "25000", "250", "25"], a: 1 },
-            { q: "أوجد ناتج العملية: 250 ÷ 10", o: ["2.5", "25", "250", "2500"], a: 1 },
-            { q: "ما العدد المفقود في الجملة العددية: ؟ × 10 = 2500", o: ["25", "250", "2500", "25000"], a: 1 },
-            { q: "ما العدد المفقود في الجملة: 100 × 10 = 10000 ÷ ؟", o: ["1", "10", "100", "1000"], a: 1 },
+            { q: "أوجد ناتج العملية: $25 \\times 100$", o: ["250", "2500", "25000", "250000"], a: 1 },
+            { q: "ما العدد المفقود في الجملة العددية: $؟ \\div 100 = 250$", o: ["2500", "25000", "250", "25"], a: 1 },
+            { q: "أوجد ناتج العملية: $250 \\div 10$", o: ["2.5", "25", "250", "2500"], a: 1 },
+            { q: "ما العدد المفقود في الجملة العددية: $؟ \\times 10 = 2500$", o: ["25", "250", "2500", "25000"], a: 1 },
+            { q: "ما العدد المفقود في الجملة: $100 \\times 10 = 10000 \\div ؟$", o: ["1", "10", "100", "1000"], a: 1 },
             { q: "يُفكّر فيصل في عدد: إذا ضربه في 100، ثم قسّمه على 10، ثم ضربه في 1000 حصل على 170000، فما هو العدد؟", o: ["1.7", "17", "170", "1700"], a: 1 },
             { q: "المضلع العشاري المنتظم له 10 أضلاع. إذا كان طول ضلعه 17 سم، فما محيطه؟", o: ["70 سم", "170 سم", "1700 سم", "27 سم"], a: 1 },
             { q: "قالت خديجة: «كل مضاعف للعدد 1000 يقبل القسمة على 100». هل عبارتها صحيحة؟", o: ["صواب دائماً، لأن 1000 من مضاعفات 100", "خطأ دائماً", "صواب للأعداد الزوجية فقط", "صواب للأعداد التي تبدأ بخمسة فقط"], a: 0 },
-            { q: "ما العدد المفقود المكون من 3 أرقام في الجملة: ؟ × 10 = 5680", o: ["568", "680", "560", "586"], a: 0 },
-            { q: "أوجد ناتج العملية الحسابية: 32 × 1000", o: ["320", "3200", "32000", "320000"], a: 2 },
-            { q: "إذا كان 5600 ÷ 10 = ؟ ، فما هو الناتج؟", o: ["56", "560", "600", "506"], a: 1 },
-            { q: "ما العدد المفقود الذي يجعل الجملة صحيحة: 45000 ÷ 1000 = ؟", o: ["4.5", "45", "450", "54"], a: 1 },
+            { q: "ما العدد المفقود المكون من 3 أرقام في الجملة: $؟ \\times 10 = 5680$", o: ["568", "680", "560", "586"], a: 0 },
+            { q: "أوجد ناتج العملية الحسابية: $32 \\times 1000$", o: ["320", "3200", "32000", "320000"], a: 2 },
+            { q: "إذا كان $5600 \\div 10 = ؟$ ، فما هو الناتج؟", o: ["56", "560", "600", "506"], a: 1 },
+            { q: "ما العدد المفقود الذي يجعل الجملة صحيحة: $45000 \\div 1000 = ؟$", o: ["4.5", "45", "450", "54"], a: 1 },
             { q: "أي من الأعداد التالية: (55.5 ، 555 ، 5550 ، 55500) يساوي ضربه في 100 الناتج 555000؟", o: ["55.5", "555", "5550", "55500"], a: 2 },
             { q: "إذا كان لدينا 75 وضُربت في 100، ثم ضُرب الناتج في 10، فما القيمة النهائية؟", o: ["7500", "75000", "750000", "750"], a: 1 },
             { q: "إذا كان لدينا 25000 وقُسِّمت على 100، ثم قُسِّم الناتج على 10، فما القيمة النهائية؟", o: ["250", "25", "2.5", "2500"], a: 1 },
-            { q: "أكمل الجملة العددية التالية: 83000 ÷ ؟ = 83", o: ["10", "100", "1000", "10000"], a: 2 }
+            { q: "أكمل الجملة العددية التالية: $83000 \\div ؟ = 83$", o: ["10", "100", "1000", "10000"], a: 2 }
         ];
 
         const defaultAppConfig = {
@@ -588,17 +719,83 @@
             questions: [...defaultQuestions]
         };
 
-        let appConfig = JSON.parse(localStorage.getItem('quizCustomConfig_v3')) || { ...defaultAppConfig };
-        if (!appConfig.teacherName || appConfig.teacherName === "أسرة الرياضيات") {
-            appConfig.teacherName = "أ. محمد خليل";
-        }
-        
-        // تحديث الأسئلة والعنوان في النسخة الحالية
-        appConfig.compTitle = "المسابقة الثالثة";
-        appConfig.questions = [...defaultQuestions];
+        let appConfig = JSON.parse(localStorage.getItem('quizCustomConfig_v4')) || { ...defaultAppConfig };
+        if (!appConfig.teacherName) appConfig.teacherName = "أ. محمد خليل";
 
         let tempTeams = [...appConfig.teams];
         let tempQuestions = [...appConfig.questions];
+
+        // متغير لتتبع الحقل النشط لزر إدراج الرمز الرياضي
+        let activeTargetInput = null;
+
+        // كائن لحفظ روابط/بيانات صور السؤال الجاري إنشاؤه
+        let currentEditingImages = {
+            qImg: '',
+            op0Img: '',
+            op1Img: '',
+            op2Img: '',
+            op3Img: ''
+        };
+
+        function insertMath(symbol) {
+            const target = activeTargetInput || document.getElementById('customQText');
+            if (!target) return;
+            const start = target.selectionStart || target.value.length;
+            const end = target.selectionEnd || target.value.length;
+            const text = target.value;
+            const wrapped = symbol.startsWith('$') ? symbol : `$${symbol}$`;
+            target.value = text.substring(0, start) + wrapped + text.substring(end);
+            target.focus();
+            target.selectionStart = target.selectionEnd = start + wrapped.length;
+        }
+
+        function handleImageUpload(input, type) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    setImageValue(type, e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updateImgPreview(type, val) {
+            setImageValue(type, val.trim());
+        }
+
+        function setImageValue(type, val) {
+            currentEditingImages[type] = val;
+            let previewEl = null;
+            let previewBox = null;
+
+            if (type === 'qImg') {
+                previewEl = document.getElementById('qImgPreview');
+                previewBox = document.getElementById('qImgPreviewBox');
+                document.getElementById('qImgUrl').value = val.startsWith('data:') ? '[صورة مرفوعة]' : val;
+            } else {
+                previewEl = document.getElementById(`${type}Preview`);
+                document.getElementById(`${type}Url`).value = val.startsWith('data:') ? '[صورة مرفوعة]' : val;
+            }
+
+            if (val) {
+                previewEl.src = val;
+                previewEl.classList.remove('hidden');
+                if (previewBox) previewBox.classList.remove('hidden');
+            } else {
+                previewEl.src = '';
+                previewEl.classList.add('hidden');
+                if (previewBox) previewBox.classList.add('hidden');
+            }
+        }
+
+        function clearImage(type) {
+            setImageValue(type, '');
+            if (type === 'qImg') {
+                document.getElementById('qImgUrl').value = '';
+            } else {
+                document.getElementById(`${type}Url`).value = '';
+            }
+        }
 
         function applyAppConfig() {
             document.querySelectorAll('.ui-school-name').forEach(el => el.textContent = appConfig.schoolName);
@@ -637,6 +834,7 @@
                 tabQ.classList.remove('hidden');
                 btnQ.className = "px-4 py-1.5 rounded-lg font-bold text-sm bg-yellow-500 text-slate-900";
                 btnGen.className = "px-4 py-1.5 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700";
+                typesetMath(tabQ);
             }
         }
 
@@ -704,16 +902,21 @@
             tempQuestions.forEach((qObj, idx) => {
                 const item = document.createElement('div');
                 item.className = "flex justify-between items-center p-2.5 rounded-xl bg-slate-900/80 border border-emerald-800/40 text-xs";
+                
+                const hasImgBadge = qObj.qImg ? `<span class="bg-yellow-500/20 text-yellow-300 text-[10px] px-1.5 py-0.5 rounded border border-yellow-400/30 mr-1">📷 صورة</span>` : '';
+                
                 item.innerHTML = `
                     <div class="flex-1 pr-1 truncate">
                         <span class="font-bold text-yellow-400 ml-1">س${idx+1}:</span>
+                        ${hasImgBadge}
                         <span class="text-white">${qObj.q}</span>
                         <span class="text-emerald-400 block text-[11px] mt-0.5">الإجابة: ${qObj.o[qObj.a]}</span>
                     </div>
-                    <button onclick="removeQuestion(${idx})" class="text-red-400 hover:text-red-300 px-2 py-1 bg-red-950/60 rounded-lg border border-red-800 font-bold">حذف</button>
+                    <button onclick="removeQuestion(${idx})" class="text-red-400 hover:text-red-300 px-2 py-1 bg-red-950/60 rounded-lg border border-red-800 font-bold ml-2">حذف</button>
                 `;
                 container.appendChild(item);
             });
+            typesetMath(container);
         }
 
         function openNewQuestionForm() {
@@ -724,6 +927,12 @@
             document.getElementById('customOp2').value = '';
             document.getElementById('customOp3').value = '';
             document.getElementById('customCorrectAns').value = '0';
+            
+            clearImage('qImg');
+            clearImage('op0Img');
+            clearImage('op1Img');
+            clearImage('op2Img');
+            clearImage('op3Img');
         }
 
         function saveNewQuestion() {
@@ -739,7 +948,20 @@
                 return;
             }
 
-            tempQuestions.push({ q, o: [op0, op1, op2, op3], a });
+            const newQ = {
+                q,
+                o: [op0, op1, op2, op3],
+                a,
+                qImg: currentEditingImages.qImg || null,
+                oImgs: [
+                    currentEditingImages.op0Img || null,
+                    currentEditingImages.op1Img || null,
+                    currentEditingImages.op2Img || null,
+                    currentEditingImages.op3Img || null
+                ]
+            };
+
+            tempQuestions.push(newQ);
             document.getElementById('newQuestionBox').classList.add('hidden');
             renderQuestionsList();
             document.getElementById('cfgMaxQuestions').value = tempQuestions.length;
@@ -771,14 +993,18 @@
             if(maxQ < 1) maxQ = 1;
             appConfig.maxQuestions = maxQ;
 
-            localStorage.setItem('quizCustomConfig_v3', JSON.stringify(appConfig));
+            try {
+                localStorage.setItem('quizCustomConfig_v4', JSON.stringify(appConfig));
+            } catch(e) {
+                console.warn("حجم البيانات كبير جداً على التخزين المؤقت، تم الحفظ للجلسة الحالية:", e);
+            }
             applyAppConfig();
             closeSettingsModal();
         }
 
         function resetDefaultSettings() {
-            if(confirm("هل تريد استعادة الإعدادات والأسئلة الافتراضية الأصلية بالكامل؟")) {
-                localStorage.removeItem('quizCustomConfig_v3');
+            if(confirm("هل تريد استعادة الإعدادات والأسئلة الافتراضية الأصلية؟")) {
+                localStorage.removeItem('quizCustomConfig_v4');
                 appConfig = JSON.parse(JSON.stringify(defaultAppConfig));
                 applyAppConfig();
                 closeSettingsModal();
@@ -959,19 +1185,49 @@
             qSection.classList.remove('hidden');
             qSection.classList.add('flex');
 
-            document.getElementById('qText').textContent = state.currentQ.q;
+            // عرض نص السؤال
+            const qTextEl = document.getElementById('qText');
+            qTextEl.textContent = state.currentQ.q;
+
+            // عرض صورة السؤال إن وجدت
+            const qImgContainer = document.getElementById('qImgContainer');
+            const qDisplayImg = document.getElementById('qDisplayImg');
+            if (state.currentQ.qImg) {
+                qDisplayImg.src = state.currentQ.qImg;
+                qImgContainer.classList.remove('hidden');
+            } else {
+                qDisplayImg.src = '';
+                qImgContainer.classList.add('hidden');
+            }
+
+            // تجهيز شبكة الخيارات
             const grid = document.getElementById('optionsGrid'); 
             grid.innerHTML = '';
             
-            let ops = state.currentQ.o.map((txt, i) => ({txt, i})).sort(() => Math.random() - 0.5);
+            let ops = state.currentQ.o.map((txt, i) => {
+                const img = (state.currentQ.oImgs && state.currentQ.oImgs[i]) ? state.currentQ.oImgs[i] : null;
+                return { txt, img, i };
+            }).sort(() => Math.random() - 0.5);
 
             ops.forEach((op) => {
                 const btn = document.createElement('button');
                 btn.className = 'quiz-option-btn w-full';
-                btn.textContent = op.txt; 
+                
+                let contentHTML = '';
+                if (op.img) {
+                    contentHTML += `<img src="${op.img}" class="max-h-20 max-w-full rounded border border-yellow-400/40 object-contain mb-1">`;
+                }
+                contentHTML += `<span>${op.txt}</span>`;
+                
+                btn.innerHTML = contentHTML;
+                btn.dataset.originalIndex = op.i;
                 btn.onclick = () => checkAnswer(op.i, btn);
                 grid.appendChild(btn);
             });
+
+            // معالجة الصيغ والرموز الرياضية بواسطة MathJax
+            typesetMath(qSection);
+
             startTimer();
         }
 
@@ -990,7 +1246,7 @@
             const btns = document.querySelectorAll('.quiz-option-btn');
             btns.forEach(b => { 
                 b.disabled = true; 
-                if(b.textContent === state.currentQ.o[state.currentQ.a]) b.classList.add('correct'); 
+                if(parseInt(b.dataset.originalIndex) === state.currentQ.a) b.classList.add('correct'); 
             });
             playSfx('wrong');
             document.getElementById('nextBtn').classList.remove('hidden');
@@ -1009,7 +1265,9 @@
             } else {
                 btn.classList.add('wrong'); 
                 playSfx('wrong');
-                btns.forEach(b => { if(b.textContent === state.currentQ.o[state.currentQ.a]) b.classList.add('correct'); });
+                btns.forEach(b => { 
+                    if(parseInt(b.dataset.originalIndex) === state.currentQ.a) b.classList.add('correct'); 
+                });
             }
             document.getElementById('nextBtn').classList.remove('hidden');
         }
